@@ -66,7 +66,7 @@ public class MainMenu : MonoBehaviour {
         //If both players are ready start the game
         if(isPlayerOneReady && isPlayerTwoReady)
         {
-            print("Start Game");
+            EventManager.instance.OnStartGame.Invoke();
         }
     }
 }
