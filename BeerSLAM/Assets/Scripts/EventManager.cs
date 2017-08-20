@@ -6,11 +6,15 @@ using UnityEngine.Events;
 //Called then both players are ready to begin
 public class StartGame : UnityEvent { }
 
+//Called when the game ends, either forcibly or when a player wins
+public class EndGame : UnityEvent { }
+
 //Begin Round is called when the round should begin
 public class BeginRound : UnityEvent { }
 
-//End round iss called when the round ends, passing a bool to know which player wins
-public class EndRound : UnityEvent<bool> { }
+//End round iss called when the round ends, passing an int for a switch case
+//Player One win = 0 Player two = 1, Draw = 2
+public class EndRound : UnityEvent<int> { }
 
 public class EventManager : MonoBehaviour {
 
@@ -34,6 +38,7 @@ public class EventManager : MonoBehaviour {
 
     //Events
     public StartGame OnStartGame = new StartGame();
+    public EndGame OnEndGame = new EndGame();
     public BeginRound OnBeginRound = new BeginRound();
     public EndRound OnEndRound = new EndRound();
 
