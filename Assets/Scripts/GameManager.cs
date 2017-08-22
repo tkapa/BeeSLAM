@@ -114,6 +114,7 @@ public class GameManager : MonoBehaviour {
         if(playerOneWins == maximumWins || playerTwoWins == maximumWins)
         {
             //If either player has reached the maximum number of wins, finish the game.
+            EventManager.instance.OnEndGame.Invoke();
         }
     }
 }

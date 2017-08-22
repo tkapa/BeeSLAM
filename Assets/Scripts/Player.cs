@@ -4,138 +4,75 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-    public string throwInput;
-    public string dodgeInput;
+    //Used to define which number player this is
+    public enum Player_Number{
+        EPN_1 = 0,
+        EPN_2
+    }
 
-    public GameObject beer;
+    //Tracks the state of the player
+    public enum Player_State
+    {
+        EPS_Standing,
+        EPS_Jumping,
+        EPS_Dodging,
+        EPS_Parrying
+    }
 
-    private GameObject empty;
-    private Transform arm;
+    public Player_Number playerNumber;
 
-    private float downTime, pressButton, beerDeath = 3;
-    private float maxCoolDown = 3;
+    [HideInInspector]
+    public Player_State playerState = Player_State.EPS_Standing;
 
-    private bool grounded = true;
+    [HideInInspector]
+    public Rigidbody2D rb;
 
-    private Vector2 oldpos;
-    private float temp;
+    //Inputs for this player
+    public string throwInput, dodgeInput;
 
-    private float jumpBackForce = 300, jumpUpForce = 300,dodgeBack = 60, dodgeUp = 100;
+    //Am I meant to be able to move
+    //(is true for now, make false when testing)
+    bool takingInput = true;
+
 
     // Use this for initialization
     void Start () {
-        //used to swing arm? maybe?
-        arm = this.gameObject.transform.Find("arm");
+        //Check for setup errors
+        if (GetComponent<Rigidbody2D>())
+            Debug.LogError(gameObject.name + " does not contain a rigidbody2D!");
 
-        //Create some empty gameObjects
-        empty = new GameObject(this.name + "_Beer");
+        if (playerNumber == 0)
+            Debug.LogError(gameObject.name + " has not been assigned a player number!");
+
+        //Listen for round events
+        EventManager.instance.OnBeginRound.AddListener(() => {
+            takingInput = true;
+        });
+
+        EventManager.instance.OnEndRound.AddListener((b) => {
+            takingInput = false;
+        });
     }
+	
+	// Update is called once per frame
+	void Update () {
+        //If input is being accepted
+        if (takingInput)
+            PollInput(Time.deltaTime);
+	}
 
-    // Update is called once per frame
-    void Update()
+    //Called to take input from the player
+    void PollInput(float timeDelta)
     {
 
-        //
-        GetKey(Time.deltaTime);
-
     }
 
-
-    //Checks for player input
-    private string GetKey(float d)
+    //Called when the player is hit
+    public void OnDeath()
     {
-
-        if (Input.GetKeyDown(throwInput))
-        {
-            downTime = Time.time;
-            return "Throw";
-        }
-        else if(Input.GetKeyUp(throwInput))
-        {
-            pressButton = Time.time;
-            float temp = pressButton - downTime;
-
-            //Create Beer Obj
-            GameObject beerTemp;
-            beerTemp = Instantiate(beer,arm,false);
-            beerTemp.transform.parent = empty.transform;
-            beerTemp.name = "beer";
-
-            //Quick hack
-            if (temp > 1.5)
-                temp = 1.5f;
-
-            if (this.gameObject.name == "Player1")
-                beerTemp.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(temp * jumpBackForce, temp * jumpUpForce));
-            else
-                beerTemp.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(-(temp * jumpBackForce),( temp * jumpUpForce)));
-
-            //Destroy after a time
-            Destroy(beerTemp, beerDeath);
-
-            return "Throw: " + temp.ToString();
-        }
-
-        if (Input.GetKeyDown(dodgeInput))
-        {
-            downTime = Time.time;
-            
-            //Ground Check
-            if (this.transform.position.y > -2.5)
-                grounded = false;
-            else
-                grounded = true;
-
-            return "Dodge";
-        }
-        else if(Input.GetKeyUp(dodgeInput))
-        {
-            pressButton = Time.time;
-            temp = pressButton - downTime;
-
-            //Dodging
-            if (temp > 0.5)
-            {
-                StartCoroutine(Dodge(maxCoolDown));
-                print(this.transform.position.x + " "+ oldpos.x);
-                oldpos = this.transform.position;
-            }
-            //Jumping
-            else if (temp < 0.5 && grounded)
-                this.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, jumpUpForce));
-
-            return "Dodge: " + temp.ToString();
-        }
-
-        //nothing being pressed 
-        return null;
-    }
-
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-
-        //Make this nice one day...
-        if(other.gameObject.transform.parent.name == "Player2_Beer" && this.gameObject.name != "Player2")
-        {
-            print("Player 2 has won");
+        if (playerNumber == Player_Number.EPN_1)
             EventManager.instance.OnEndRound.Invoke(1);
-        }
-        else if(other.gameObject.transform.parent.name == "Player1_Beer" && this.gameObject.name != "Player1")
-        {
-            print("Player 1 has won");
-            EventManager.instance.OnEndRound.Invoke(0);
-        }
-    }
-
-    //Dodge
-    private IEnumerator Dodge(float coolDown = 3)
-    {
-        if (this.gameObject.name == "Player1")
-            this.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(-dodgeBack, dodgeUp));
         else
-            this.gameObject.GetComponent<Rigidbody2D>().AddForce(new Vector2(dodgeBack, dodgeUp));
-        yield return new WaitForSeconds(coolDown);
+            EventManager.instance.OnEndRound.Invoke(0);
     }
-
 }

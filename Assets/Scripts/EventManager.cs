@@ -12,8 +12,8 @@ public class EndGame : UnityEvent { }
 //Begin Round is called when the round should begin
 public class BeginRound : UnityEvent { }
 
-//End round iss called when the round ends, passing an int for a switch case
-//Player One win = 0 Player two = 1, Draw = 2
+//End round is called when the round ends, passing an int for a switch case
+//Player One  = 0 Player two = 1, Draw = 2
 public class EndRound : UnityEvent<int> { }
 
 public class EventManager : MonoBehaviour {
