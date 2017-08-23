@@ -22,9 +22,6 @@ public class Beer : MonoBehaviour {
             Debug.LogError("Beer prefab does not contain a RigidBody!");
         else
             rb = GetComponent<Rigidbody2D>();
-
-        //Add force to the rigidbody
-        rb.AddForce(throwingVector);
 	}
 
     //Called at a fixed rate
@@ -47,7 +44,7 @@ public class Beer : MonoBehaviour {
     void Update () {
 	}
 
-    //When the beer leaves the player's hand
+    //When the beer hits a player
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.GetComponent<Player>())

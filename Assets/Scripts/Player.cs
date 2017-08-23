@@ -28,6 +28,8 @@ public class Player : MonoBehaviour {
     [HideInInspector]
     public Rigidbody2D rb;
 
+    Transform arm;
+
     //Inputs for this player
     public string throwInput, dodgeInput;
 
@@ -45,6 +47,8 @@ public class Player : MonoBehaviour {
     public float doubleTapTime = 0.1f;
     private float dodgeTime;
 
+    //Beer can gameObject
+    public GameObject beerCan;
 
     // Use this for initialization
     void Start () {
@@ -52,9 +56,6 @@ public class Player : MonoBehaviour {
         if (!GetComponent<Rigidbody2D>())
             Debug.LogError(gameObject.name + " does not contain a rigidbody2D!");
         else rb = GetComponent<Rigidbody2D>();
-        
-        if (playerNumber == 0)
-            Debug.LogError(gameObject.name + " has not been assigned a player number!");
 
         //Listen for round events
         EventManager.instance.OnBeginRound.AddListener(() => {
@@ -64,6 +65,8 @@ public class Player : MonoBehaviour {
         EventManager.instance.OnEndRound.AddListener((b) => {
             takingInput = false;
         });
+
+        arm = GetComponentInChildren<Transform>();
     }
 	
 	// Update is called once per frame
@@ -117,10 +120,6 @@ public class Player : MonoBehaviour {
         //Switch case for throwing
         switch (playerState)
         {
-            default:
-                //No throw by default
-                break;
-
             //Throw for standing
             case Player_State.EPS_Standing:
                 if (throwHoldTime > throwThresholds.y)
@@ -135,6 +134,8 @@ public class Player : MonoBehaviour {
                 {
 
                 }
+
+                Instantiate(beerCan, arm.position, arm.rotation);
                 break;
 
             //Throw for jumping
@@ -151,6 +152,7 @@ public class Player : MonoBehaviour {
                 {
 
                 }
+                Instantiate(beerCan, arm.position, arm.rotation);
                 break;
         }
     }
