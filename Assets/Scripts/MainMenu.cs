@@ -15,21 +15,20 @@ public class MainMenu : MonoBehaviour {
     //used to tell whether or not both players are ready
     private bool isPlayerOneReady = false;
     private bool isPlayerTwoReady = false;
+    private bool isPlaying = false;
 
-    public GameObject image;
 
 	// Use this for initialization
 	void Start () {
-        EventManager.instance.OnEndGame.AddListener(()=>{
-            //Listening for the end game thingo
-            image.SetActive(true);
-        });
+        EventManager.instance.OnEndGame.AddListener(Playing);
 	}
 	
 	// Update is called once per frame
 	void Update () {
         TakeInput();
-        StartGame();
+
+        if(!isPlaying)
+            StartGame();
 	}
 
     //Does something with the input for both players
@@ -65,13 +64,18 @@ public class MainMenu : MonoBehaviour {
         }
     }
 
+    void Playing()
+    {
+        isPlaying = !isPlaying;
+    }
+
     //Should the game begin?
     void StartGame()
     {
         //If both players are ready start the game
-        if(isPlayerOneReady && isPlayerTwoReady)
+        if(isPlayerOneReady && isPlayerTwoReady && !isPlaying)
         {
-            image.SetActive(false);
+            Playing();
             EventManager.instance.OnStartGame.Invoke();
         }
     }

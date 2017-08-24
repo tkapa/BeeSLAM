@@ -11,13 +11,15 @@ public class Beer : MonoBehaviour {
 
     bool isActive = false;
 
+    public float defaultRebound = 1000.0f;
+
     //Time this object is invulnerable
     public float invulTime = 0.1f;
     float invulCount;
 
 	// Use this for initialization
 	void Start () {
-        EventManager.instance.OnEndRound.AddListener((b)=> { Destroy(this); });
+        EventManager.instance.OnEndRound.AddListener((b)=> { Destroy(this.gameObject); });
 
         //If there's no Rigidbody
         if (!GetComponent<Rigidbody2D>())
@@ -41,9 +43,13 @@ public class Beer : MonoBehaviour {
     //Called when a beer can hits another beer can
     void PushBack(GameObject o)
     {
-        float totalForce = 0.0f;
+        float totalForce = defaultRebound;
 
         totalForce += o.GetComponent<Rigidbody2D>().velocity.magnitude + rb.velocity.magnitude;
+
+        Vector2 direction = o.transform.position - transform.position;
+
+        rb.AddForce(direction * totalForce);
     }
 
     private void OnCollisionEnter(Collision collision)

@@ -94,8 +94,6 @@ public class Player : MonoBehaviour {
         //When the player releases the throw button
         else if (Input.GetKeyUp(throwInput))
         {
-            print(throwHoldTime);
-
             Throw();
 
             //Reset the hold time
@@ -131,11 +129,14 @@ public class Player : MonoBehaviour {
                 case Player_State.EPS_Standing:
                     GameObject b = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
                     b.GetComponent<Rigidbody2D>().AddForce(highThrowStrength);
+                    Destroy(b, 4.0f);
                     break;
 
                 //Throw for jumping
                 case Player_State.EPS_Jumping:
-
+                    GameObject g = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
+                    g.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength);
+                    Destroy(g, 4.0f);
                     break;
             }
         }
@@ -147,11 +148,14 @@ public class Player : MonoBehaviour {
                 case Player_State.EPS_Standing:
                     GameObject b = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
                     b.GetComponent<Rigidbody2D>().AddForce(medThrowStrength);
+                    Destroy(b, 4.0f);
                     break;
 
                 //Throw for jumping
                 case Player_State.EPS_Jumping:
-
+                    GameObject g = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
+                    g.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength);
+                    Destroy(g, 4.0f);
                     break;
             }
         }
@@ -163,11 +167,14 @@ public class Player : MonoBehaviour {
                 case Player_State.EPS_Standing:
                     GameObject b = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
                     b.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength);
+                    Destroy(b, 4.0f);
                     break;
 
                 //Throw for jumping
                 case Player_State.EPS_Jumping:
-
+                    GameObject g = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
+                    g.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength);
+                    Destroy(g, 4.0f);
                     break;
             }
         }

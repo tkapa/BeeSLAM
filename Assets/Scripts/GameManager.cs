@@ -14,17 +14,17 @@ public class GameManager : MonoBehaviour {
 
     //Keep track of the round's time
     public float maximumRoundTime = 20.0f;
-    float currentRoundTime;
+    public float currentRoundTime;
 
     //Keep track of times between rounds
     public float roundResetTime = 4.0f;
-    float roundResetCounter;
+    public float roundResetCounter;
 
     //Bools used to check whether or not players can move and are actively playing
     bool isActive;
     bool isPlaying = false;
-    bool isGameManagerOnline = false;
-
+    bool gameManagerActive = false;
+    float timer;
 	// Use this for initialization
 	void Start () {
         //Listening for important events
@@ -32,11 +32,11 @@ public class GameManager : MonoBehaviour {
 
             //When the game starts, clear the slate for the game to begin
             currentRound = playerOneWins = playerTwoWins = 0;
-            roundResetCounter = roundResetTime * 2;
+            roundResetCounter = roundResetTime;
             currentRoundTime = maximumRoundTime;
             isActive = false;
             isPlaying = false;
-            isGameManagerOnline = true;
+            gameManagerActive = true;
         });
 
         EventManager.instance.OnBeginRound.AddListener(()=>{
@@ -45,39 +45,31 @@ public class GameManager : MonoBehaviour {
             currentRoundTime = maximumRoundTime;
             isActive = false;
             isPlaying = true;
+            timer = Time.time + 10;
         });
 
         EventManager.instance.OnEndRound.AddListener((i)=> {
 
             //When the round ends run a check and reset for the next round
-            InactivityCheck();
-            GameEndCheck();
+            CheckWins(i);
             roundResetCounter = roundResetTime;
             isPlaying = false;
+            print(i);
         });
-
-        EventManager.instance.OnEndGame.AddListener(() =>   {
-            //Do things when the game ends
-            isGameManagerOnline = false;
+        EventManager.instance.OnEndGame.AddListener(() => {
+            gameManagerActive = false;
         });
     }
 	
 	// Update is called once per frame
 	void Update () {
-
-        if (isGameManagerOnline)
-        {
-            //Check if anyone is playing the game
-            if (Input.GetKeyDown("a") || Input.GetKeyDown("l"))
-            {
-                if (!isActive)
-                    isActive = true;
-            }
-
+        if (gameManagerActive) {
             RoundTimer();
-            //print("Round Countdown: " + roundResetCounter + " CurrentRoundTime: " + currentRoundTime + " " + isActive);
-        }
-	}
+
+            if (Input.anyKeyDown)
+                isActive = true;
+        }        
+    }
 
     //Used to count time during and between rounds
     void RoundTimer()
@@ -96,23 +88,39 @@ public class GameManager : MonoBehaviour {
             currentRoundTime -= Time.deltaTime;
 
             if (currentRoundTime < 0)
-                EventManager.instance.OnEndRound.Invoke(3);
+                EventManager.instance.OnEndRound.Invoke(2);
+
+            //Check whether or not people are playing
+            if (Time.time > timer && !isActive)
+                EventManager.instance.OnEndGame.Invoke();
         }
     }
 
-    //Used to check if no one is playing the game
-    void InactivityCheck()
+    //Called to add to a player's wins
+    void CheckWins(int i)
     {
-        //If there is still no activity, end the game
-        if (!isActive)
-            EventManager.instance.OnEndGame.Invoke();
-    }
+        print("Run check wins");
+        //Add to a player's wins
+        switch (i) {
+            //Player one wins
+            case 0:
+                ++playerOneWins;
+                break;
 
-    //Used to check whether or not the game is done
-    void GameEndCheck()
-    {
-        if(playerOneWins == maximumWins || playerTwoWins == maximumWins)
+            //Player two wins
+            case 1:
+                ++playerTwoWins;
+                break;
+
+            case 2:
+                ++playerOneWins;
+                ++playerTwoWins;
+                break;
+        }
+
+        if (playerOneWins >= maximumWins || playerTwoWins >= maximumWins)
         {
+            print("Ended");
             //If either player has reached the maximum number of wins, finish the game.
             EventManager.instance.OnEndGame.Invoke();
         }
