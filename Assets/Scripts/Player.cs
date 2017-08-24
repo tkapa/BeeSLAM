@@ -43,6 +43,8 @@ public class Player : MonoBehaviour {
     public Vector2 throwThresholds = new Vector2(0.4f, 0.8f);
     private float throwHoldTime = 0.0f;
 
+    public Vector2 lowThrowStrength, medThrowStrength, highThrowStrength;
+
     //Manages the player's count to jump or dodge
     public float doubleTapTime = 0.1f;
     private float dodgeTime;
@@ -117,43 +119,54 @@ public class Player : MonoBehaviour {
 
     void Throw()
     {
-        //Switch case for throwing
-        switch (playerState)
+        if (throwHoldTime > throwThresholds.y)
         {
-            //Throw for standing
-            case Player_State.EPS_Standing:
-                if (throwHoldTime > throwThresholds.y)
-                {
 
-                }
-                else if (throwHoldTime > throwThresholds.x && throwHoldTime < throwThresholds.y)
-                {
+            switch (playerState)
+            {
+                //Throw for standing
+                case Player_State.EPS_Standing:
+                    GameObject b = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
+                    b.GetComponent<Rigidbody2D>().AddForce(highThrowStrength);
+                    break;
 
-                }
-                else if(throwHoldTime < throwThresholds.x)
-                {
+                //Throw for jumping
+                case Player_State.EPS_Jumping:
 
-                }
+                    break;
+            }
+        }
+        else if (throwHoldTime > throwThresholds.x && throwHoldTime < throwThresholds.y)
+        {
+            switch (playerState)
+            {
+                //Throw for standing
+                case Player_State.EPS_Standing:
+                    GameObject b = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
+                    b.GetComponent<Rigidbody2D>().AddForce(medThrowStrength);
+                    break;
 
-                Instantiate(beerCan, arm.position, arm.rotation);
-                break;
+                //Throw for jumping
+                case Player_State.EPS_Jumping:
 
-            //Throw for jumping
-            case Player_State.EPS_Jumping:
-                if (throwHoldTime > throwThresholds.y)
-                {
+                    break;
+            }
+        }
+        else if (throwHoldTime < throwThresholds.x)
+        {
+            switch (playerState)
+            {
+                //Throw for standing
+                case Player_State.EPS_Standing:
+                    GameObject b = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
+                    b.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength);
+                    break;
 
-                }
-                else if (throwHoldTime > throwThresholds.x && throwHoldTime < throwThresholds.y)
-                {
+                //Throw for jumping
+                case Player_State.EPS_Jumping:
 
-                }
-                else if (throwHoldTime < throwThresholds.x)
-                {
-
-                }
-                Instantiate(beerCan, arm.position, arm.rotation);
-                break;
+                    break;
+            }
         }
     }
 
@@ -177,9 +190,18 @@ public class Player : MonoBehaviour {
         yield return null;
     }
 
+
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        //Upon collision with the ground
         if (collision.gameObject.tag == "ground" && playerState == Player_State.EPS_Jumping)
             playerState = Player_State.EPS_Standing;
+
+        //Upon collision with a beer can
+        if (collision.gameObject.tag == "beer")
+            OnDeath();
+
+        //Provide screenshake here
     }
 }

@@ -7,7 +7,7 @@ public class Beer : MonoBehaviour {
     //Know how hard the player wants to throw and which player wants to throw it
     public Vector3 throwingVector;
 
-    Rigidbody2D rb;
+    public Rigidbody2D rb;
 
     bool isActive = false;
 
@@ -22,34 +22,17 @@ public class Beer : MonoBehaviour {
             Debug.LogError("Beer prefab does not contain a RigidBody!");
         else
             rb = GetComponent<Rigidbody2D>();
-	}
 
-    //Called at a fixed rate
-    private void FixedUpdate()
-    {
-        //Stay invulnerable until the timer is up 
-        if (!isActive)
-        {
-            invulCount -= Time.deltaTime;
-
-            if(invulCount < 0)
-            {
-                isActive = true;
-                GetComponent<CircleCollider2D>().isTrigger = false;
-            }
-        }
+        invulCount = Time.time + invulTime;
     }
 
     // Update is called once per frame
     void Update () {
-	}
-
-    //When the beer hits a player
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.GetComponent<Player>())
+                
+        if(!isActive && Time.time > invulCount)
         {
-            other.gameObject.GetComponent<Player>().OnDeath();
+            isActive = true;
+            GetComponent<CircleCollider2D>().isTrigger = false;
         }
-    }
+	}
 }
