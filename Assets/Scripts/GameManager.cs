@@ -9,8 +9,8 @@ public class GameManager : MonoBehaviour {
     private int currentRound = 0;
 
     //Keeping track of each player's round wins
-    int playerOneWins = 0;
-    int playerTwoWins = 0;
+    public int playerOneWins = 0;
+    public int playerTwoWins = 0;
 
     //Keep track of the round's time
     public float maximumRoundTime = 20.0f;
