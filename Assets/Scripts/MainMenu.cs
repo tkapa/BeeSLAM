@@ -16,9 +16,14 @@ public class MainMenu : MonoBehaviour {
     private bool isPlayerOneReady = false;
     private bool isPlayerTwoReady = false;
 
+    public GameObject image;
+
 	// Use this for initialization
 	void Start () {
-		
+        EventManager.instance.OnEndGame.AddListener(()=>{
+            //Listening for the end game thingo
+            image.SetActive(true);
+        });
 	}
 	
 	// Update is called once per frame
@@ -53,7 +58,7 @@ public class MainMenu : MonoBehaviour {
             isPlayerTwoReady = false;
         }
 
-        //Allow for muting of Music (is any)
+        //Allow for muting of Music (if any)
         if (Input.GetKey("m"))
         {
 
@@ -66,6 +71,7 @@ public class MainMenu : MonoBehaviour {
         //If both players are ready start the game
         if(isPlayerOneReady && isPlayerTwoReady)
         {
+            image.SetActive(false);
             EventManager.instance.OnStartGame.Invoke();
         }
     }

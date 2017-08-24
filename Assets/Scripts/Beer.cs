@@ -17,6 +17,8 @@ public class Beer : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        EventManager.instance.OnEndRound.AddListener((b)=> { Destroy(this); });
+
         //If there's no Rigidbody
         if (!GetComponent<Rigidbody2D>())
             Debug.LogError("Beer prefab does not contain a RigidBody!");
@@ -35,4 +37,20 @@ public class Beer : MonoBehaviour {
             GetComponent<CircleCollider2D>().isTrigger = false;
         }
 	}
+
+    //Called when a beer can hits another beer can
+    void PushBack(GameObject o)
+    {
+        float totalForce = 0.0f;
+
+        totalForce += o.GetComponent<Rigidbody2D>().velocity.magnitude + rb.velocity.magnitude;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "beer")
+        {
+            PushBack(collision.gameObject);
+        }
+    }
 }

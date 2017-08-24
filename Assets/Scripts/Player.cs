@@ -37,7 +37,7 @@ public class Player : MonoBehaviour {
 
     //Am I meant to be able to move
     //(is true for now, make false when testing)
-    bool takingInput = true;
+    bool takingInput = false;
 
     //Manages the player's throwing and when the strength increases 
     public Vector2 throwThresholds = new Vector2(0.4f, 0.8f);
@@ -51,9 +51,11 @@ public class Player : MonoBehaviour {
 
     //Beer can gameObject
     public GameObject beerCan;
+    Vector2 startPos;
 
     // Use this for initialization
     void Start () {
+        startPos = this.transform.position;
         //Check for setup errors
         if (!GetComponent<Rigidbody2D>())
             Debug.LogError(gameObject.name + " does not contain a rigidbody2D!");
@@ -66,6 +68,7 @@ public class Player : MonoBehaviour {
 
         EventManager.instance.OnEndRound.AddListener((b) => {
             takingInput = false;
+            ResetPosition();
         });
 
         arm = GetComponentInChildren<Transform>();
@@ -74,7 +77,7 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         //If input is being accepted
-        //if (takingInput)
+        if (takingInput)
             PollInput(Time.deltaTime);
 	}
 
@@ -190,7 +193,11 @@ public class Player : MonoBehaviour {
         yield return null;
     }
 
-
+    //Reset the player's position to the origin
+    void ResetPosition()
+    {
+        transform.position = startPos;
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -200,7 +207,11 @@ public class Player : MonoBehaviour {
 
         //Upon collision with a beer can
         if (collision.gameObject.tag == "beer")
+        {
             OnDeath();
+            Destroy(collision.gameObject);
+        }
+            
 
         //Provide screenshake here
     }
