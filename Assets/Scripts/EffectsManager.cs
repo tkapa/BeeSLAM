@@ -30,7 +30,7 @@ public class EffectsManager : MonoBehaviour {
     //Called when Beers collide with each other
     public void BeerCollision(Vector2 position)
     {
-        s.Shake(Random.Range(0.05f, 0.1f), 0.1f);
+        s.Shake(Random.Range(0.05f, 0.075f), 0.1f);
         GameObject b = Instantiate(beerCollisionSystem, position, transform.rotation) as GameObject;
         Destroy(b, 0.5f);
     }
@@ -38,7 +38,7 @@ public class EffectsManager : MonoBehaviour {
     //Called when Beer collides with the player
     public void PlayerCollision(Vector2 position, Player player)
     {
-        s.Shake(Random.Range(0.1f, 0.15f), 0.5f);
+        s.Shake(Random.Range(0.05f, 0.1f), 0.5f);
         pl = player;
         GameObject p = Instantiate(beerCollisionSystem, position, transform.rotation) as GameObject;
         Destroy(p, 0.5f);

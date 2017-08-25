@@ -18,9 +18,10 @@ public class UserInterfaceManager : MonoBehaviour {
     bool mainMenuShowing = true;
 
     GameManager gm;
-
+    int loser;
     int result;
-
+    bool takeAway = false;
+    float healthValue = 100.0f;
     // Use this for initialization
     void Start()
     {
@@ -31,25 +32,33 @@ public class UserInterfaceManager : MonoBehaviour {
         EventManager.instance.OnBeginRound.AddListener(()=> {
             roundCountdownText.SetActive(false);
             WinRoundText.SetActive(false);
-
-            //Reset hp bars
-            foreach(Slider s in sliders)
-            {
-                s.GetComponent<Slider>().value = 1;
-            }
         });
         EventManager.instance.OnEndRound.AddListener((b) => {
             roundCountdownText.SetActive(true);
-            WinRoundText.SetActive(true);
+
+            //Reset hp bars
+            foreach (Slider s in sliders)
+            {
+                s.GetComponent<Slider>().value = 100;
+            }
+
+            takeAway = false;
+        });
+
+        EventManager.instance.OnPlayerDeath.AddListener((v ,p) => {
+            healthValue = 100.0f;           
 
             //Takes away hp
-            UpdateHP(b);
+            loser = (int)p.playerNumber;
 
             //Gets the players number
-            result = b + 1;
+            result = loser + 1;
+            takeAway = true;
+            print(loser);
 
             //Displays who has won
             WinRoundText.GetComponent<Text>().text = "Player " + result.ToString() + " Wins";
+            WinRoundText.SetActive(true);
         });
     }
 
@@ -62,6 +71,9 @@ public class UserInterfaceManager : MonoBehaviour {
 
         int rrt = (int)gm.roundResetCounter;
         roundCountdownText.GetComponent<Text>().text = rrt.ToString();
+
+        if (takeAway)
+            UpdateHP(loser);
 
         
         /*if (Input.GetKeyDown("v"))
@@ -78,11 +90,9 @@ public class UserInterfaceManager : MonoBehaviour {
 
     void UpdateHP(int playerW)
     {
-        //GameObject.FindObjectOfType<ScreenShake>().Shake(0.1f, 0.09f);
-        if (playerW == 1)
-            sliders[playerW].GetComponent<Slider>().value = Mathf.Lerp(sliders[playerW].GetComponent<Slider>().value, 0, speed);
-        else if(playerW == 0)
-            sliders[playerW].GetComponent<Slider>().value = Mathf.Lerp(sliders[playerW].GetComponent<Slider>().value, 0, speed);
+        healthValue -= 10;
 
+        if(playerW != 2)
+        sliders[playerW].GetComponent<Slider>().value = healthValue;
     }
 }

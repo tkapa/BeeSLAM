@@ -241,7 +241,7 @@ public class Player : MonoBehaviour {
             playerState = Player_State.EPS_Standing;
 
         //Upon collision with a beer can
-        if (collision.gameObject.tag == "beer")
+        if (collision.gameObject.tag == "beer" && takingInput)
         {
             EventManager.instance.OnPlayerDeath.Invoke(collision.contacts[0].point, this);
         }
