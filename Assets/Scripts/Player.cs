@@ -52,6 +52,7 @@ public class Player : MonoBehaviour {
     public Vector2 dodgeThresholds = new Vector2(0.4f, 0.8f);
     private float jumpTimerStart = 0;
     public float dodgeTime;
+
     //Beer can gameObject
     public GameObject beerCan;
     Vector2 startPos;
@@ -79,6 +80,8 @@ public class Player : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        Debug.Log(playerState);
 
         //If input is being accepted
         if (takingInput)
@@ -116,16 +119,17 @@ public class Player : MonoBehaviour {
             dodgeTime += timeDelta;
 
             //Player ducks
-            Duck();
+            if (playerState == Player_State.EPS_Standing)
+                Duck();
 
         }
         else if (Input.GetKeyUp(dodgeInput))
         {
 
             //Dodge,jump
-            if (playerState == Player_State.EPS_Standing)
+            if (playerState == Player_State.EPS_Ducking)
                 Jump();
-
+            
             dodgeTime = 0;
         }
     }
@@ -203,14 +207,23 @@ public class Player : MonoBehaviour {
 
     void Duck()
     {
+        playerState = Player_State.EPS_Ducking;
+
+        //Change character height
+        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y / 2, transform.localScale.z);
+
         print("duck");
     }
 
     //Called when the player wants to jump
     void Jump()
     {
+        //Change character height
+        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y * 2, transform.localScale.z);
+
         //Set to jumping and start to jump
         playerState = Player_State.EPS_Jumping;
+
 
         rb.AddForce(new Vector2(0, jumpingForce));
     }

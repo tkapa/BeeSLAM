@@ -47,6 +47,7 @@ public class UserInterfaceManager : MonoBehaviour {
 
             //Gets the players number
             result = b + 1;
+
             //Displays who has won
             WinRoundText.GetComponent<Text>().text = "Player " + result.ToString() + " Wins";
         });
@@ -80,7 +81,7 @@ public class UserInterfaceManager : MonoBehaviour {
         //GameObject.FindObjectOfType<ScreenShake>().Shake(0.1f, 0.09f);
         if (playerW == 1)
             sliders[playerW].GetComponent<Slider>().value = Mathf.Lerp(sliders[playerW].GetComponent<Slider>().value, 0, speed);
-        else
+        else if(playerW == 0)
             sliders[playerW].GetComponent<Slider>().value = Mathf.Lerp(sliders[playerW].GetComponent<Slider>().value, 0, speed);
 
     }

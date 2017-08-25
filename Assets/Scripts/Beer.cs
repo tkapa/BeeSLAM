@@ -59,7 +59,6 @@ public class Beer : MonoBehaviour {
     {
         if (collision.gameObject.tag == "beer")
         {
-            
             FindObjectOfType<ScreenShake>().Shake(Random.Range(0.05f, 0.2f), 0.1f);
             PushBack(collision.gameObject);
         }
