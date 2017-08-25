@@ -52,6 +52,16 @@ public class GameManager : MonoBehaviour {
         EventManager.instance.OnEndRound.AddListener((i)=> {
 
             //When the round ends run a check and reset for the next round
+            foreach(Beer b in FindObjectsOfType<Beer>())
+            {
+                Destroy(b.gameObject);
+            }
+
+            foreach(Player p in FindObjectsOfType<Player>())
+            {
+                p.ResetPosition();
+            }
+
             CheckWins(i);
             roundResetCounter = roundResetTime;
             isPlaying = false;

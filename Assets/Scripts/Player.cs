@@ -70,9 +70,8 @@ public class Player : MonoBehaviour {
             takingInput = true;
         });
 
-        EventManager.instance.OnEndRound.AddListener((b) => {
+        EventManager.instance.OnPlayerDeath.AddListener((v, p) => {
             takingInput = false;
-            ResetPosition();
         });
 
         arm = GetComponentInChildren<Transform>();
@@ -226,8 +225,12 @@ public class Player : MonoBehaviour {
     }
 
     //Reset the player's position to the origin
-    void ResetPosition()
+    public void ResetPosition()
     {
+        if (playerState == Player_State.EPS_Ducking)
+            transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y * 2, transform.localScale.z);
+        playerState = Player_State.EPS_Standing;
+        //Change character height back to normal
         transform.position = startPos;
     }
 
@@ -241,10 +244,8 @@ public class Player : MonoBehaviour {
         if (collision.gameObject.tag == "beer")
         {
             EventManager.instance.OnPlayerDeath.Invoke(collision.contacts[0].point, this);
-            Destroy(collision.gameObject);
         }
-            
-
+    
         //Provide screenshake here
     }
 
