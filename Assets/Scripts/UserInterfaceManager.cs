@@ -14,6 +14,7 @@ public class UserInterfaceManager : MonoBehaviour {
     public GameObject WinRoundText;
     public GameObject roundCountdownText;
     public Slider[] sliders;
+    public Text[] wins;
     public float speed = 5;
     bool mainMenuShowing = true;
 
@@ -22,6 +23,7 @@ public class UserInterfaceManager : MonoBehaviour {
     int result;
     bool takeAway = false;
     float healthValue = 100.0f;
+    int intWins = 0;
     // Use this for initialization
     void Start()
     {
@@ -43,6 +45,14 @@ public class UserInterfaceManager : MonoBehaviour {
             }
 
             takeAway = false;
+
+            //Displays a draw
+            if (b == 2)
+            {
+                WinRoundText.SetActive(true);
+                WinRoundText.GetComponent<Text>().text = "Draw";
+            }
+           
         });
 
         EventManager.instance.OnPlayerDeath.AddListener((v ,p) => {
@@ -57,7 +67,6 @@ public class UserInterfaceManager : MonoBehaviour {
             else
                 result = 1;
             takeAway = true;
-            print(loser);
 
             //Displays who has won
             WinRoundText.GetComponent<Text>().text = "Player " + result.ToString() + " Wins";

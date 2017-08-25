@@ -24,7 +24,7 @@ public class Player : MonoBehaviour {
     [Tooltip("Number for player")]
     public Player_Number playerNumber;
 
-    //[HideInInspector]
+    [HideInInspector]
     public Player_State playerState = Player_State.EPS_Standing;
 
     [HideInInspector]
@@ -76,6 +76,9 @@ public class Player : MonoBehaviour {
             takingInput = false;
         });
 
+        EventManager.instance.OnEndRound.AddListener((b) => {
+            takingInput = false;
+        });
     }
 	
 	// Update is called once per frame
@@ -142,6 +145,7 @@ public class Player : MonoBehaviour {
             dodgeTime = 0;
         }
 
+        //Jump only after this time is up
         if (playerState == Player_State.EPS_Jumping)
             jumpTime -= timeDelta;
     }
@@ -257,8 +261,9 @@ public class Player : MonoBehaviour {
         //Upon collision with the ground
         if (collision.gameObject.tag == "ground" && playerState == Player_State.EPS_Jumping)
         {
+            //Check time
             if (jumpTime <= 0){
-                print("collided with grouund");
+                //print("collided with grouund");
 
                 playerState = Player_State.EPS_Standing;
                 jumpTime = 0.5f;
@@ -271,6 +276,5 @@ public class Player : MonoBehaviour {
             EventManager.instance.OnPlayerDeath.Invoke(collision.contacts[0].point, this);
         }
     
-        //Provide screenshake here
     }
 }
