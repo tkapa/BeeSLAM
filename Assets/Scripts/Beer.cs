@@ -12,7 +12,7 @@ public class Beer : MonoBehaviour {
     bool isActive = false;
 
     public float defaultRebound = 500.0f;
-
+    public float rollForce = 75.0f;
     //Time this object is invulnerable
     public float invulTime = 0.1f;
     float invulCount;
@@ -59,6 +59,12 @@ public class Beer : MonoBehaviour {
         {
             FindObjectOfType<EffectsManager>().BeerCollision(collision.contacts[0].point);
             PushBack(collision.gameObject);
+        }
+
+        if(collision.gameObject.tag == "ground")
+        {
+            float xVel = rb.velocity.x;
+            rb.AddForce(new Vector2(Mathf.Clamp(xVel, -1, 1) * rollForce, 0));
         }
     }
 }

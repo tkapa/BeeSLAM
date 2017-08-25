@@ -57,11 +57,13 @@ public class Player : MonoBehaviour {
 
     //Beer can gameObject
     public GameObject beerCan;
+    public ParticleSystem throwParticle;
     Vector2 startPos;
 
     // Use this for initialization
     void Start () {
         startPos = this.transform.position;
+        throwParticle.Stop();
         //Check for setup errors
         if (!GetComponent<Rigidbody2D>())
             Debug.LogError(gameObject.name + " does not contain a rigidbody2D!");
@@ -108,6 +110,11 @@ public class Player : MonoBehaviour {
     void PollInput(float timeDelta)
     {
 
+        if (Input.GetKeyDown(throwInput))
+        {
+            throwParticle.Play();
+        }
+
         //While holding down the throw button
         if (Input.GetKey(throwInput))
         {
@@ -118,6 +125,7 @@ public class Player : MonoBehaviour {
         //When the player releases the throw button
         else if (Input.GetKeyUp(throwInput))
         {
+            throwParticle.Stop();
             Throw();
 
             //Reset the hold time
