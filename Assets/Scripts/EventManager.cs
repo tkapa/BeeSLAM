@@ -16,6 +16,8 @@ public class BeginRound : UnityEvent { }
 //Player One  = 0 Player two = 1, Draw = 2
 public class EndRound : UnityEvent<int> { }
 
+public class PlayerDeath : UnityEvent<Vector2, Player> { }
+
 public class EventManager : MonoBehaviour {
 
     /// <summary>
@@ -41,6 +43,7 @@ public class EventManager : MonoBehaviour {
     public EndGame OnEndGame = new EndGame();
     public BeginRound OnBeginRound = new BeginRound();
     public EndRound OnEndRound = new EndRound();
+    public PlayerDeath OnPlayerDeath = new PlayerDeath();
 
     private void Awake()
     {

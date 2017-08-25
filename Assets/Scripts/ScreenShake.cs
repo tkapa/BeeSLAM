@@ -30,6 +30,7 @@ public class ScreenShake : MonoBehaviour {
             float quakeAmt = Random.value * strength * 2 - strength;
             Vector3 pp = transform.position;
             pp.y += quakeAmt; // can also add to x and/or z
+            pp.x += -quakeAmt * 0.2f;
             transform.position = pp;
         }
     }

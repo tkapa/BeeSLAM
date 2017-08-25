@@ -11,7 +11,7 @@ public class Beer : MonoBehaviour {
 
     bool isActive = false;
 
-    public float defaultRebound = 1000.0f;
+    public float defaultRebound = 500.0f;
 
     //Time this object is invulnerable
     public float invulTime = 0.1f;
@@ -21,8 +21,7 @@ public class Beer : MonoBehaviour {
 	void Start () {
         EventManager.instance.OnEndRound.AddListener((b)=> { Destroy(this.gameObject); });
 
-        //default rebound set to random
-        defaultRebound = Random.Range(200, 700);
+        defaultRebound = Random.Range(200.0f, 800.0f);
 
         //If there's no Rigidbody
         if (!GetComponent<Rigidbody2D>())
@@ -59,7 +58,7 @@ public class Beer : MonoBehaviour {
     {
         if (collision.gameObject.tag == "beer")
         {
-            FindObjectOfType<ScreenShake>().Shake(Random.Range(0.05f, 0.2f), 0.1f);
+            FindObjectOfType<EffectsManager>().BeerCollision(collision.contacts[0].point);
             PushBack(collision.gameObject);
         }
     }

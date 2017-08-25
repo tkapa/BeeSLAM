@@ -240,7 +240,7 @@ public class Player : MonoBehaviour {
         //Upon collision with a beer can
         if (collision.gameObject.tag == "beer")
         {
-            OnDeath();
+            EventManager.instance.OnPlayerDeath.Invoke(collision.contacts[0].point, this);
             Destroy(collision.gameObject);
         }
             
