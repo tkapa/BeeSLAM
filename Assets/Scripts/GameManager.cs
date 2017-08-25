@@ -55,7 +55,6 @@ public class GameManager : MonoBehaviour {
             CheckWins(i);
             roundResetCounter = roundResetTime;
             isPlaying = false;
-            print(i);
         });
         EventManager.instance.OnEndGame.AddListener(() => {
             gameManagerActive = false;
@@ -100,7 +99,6 @@ public class GameManager : MonoBehaviour {
     //Called to add to a player's wins
     void CheckWins(int i)
     {
-        print("Run check wins");
         //Add to a player's wins
         switch (i) {
             //Player one wins

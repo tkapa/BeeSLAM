@@ -81,8 +81,6 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        Debug.Log(playerState);
-
         //If input is being accepted
         if (takingInput)
             PollInput(Time.deltaTime);
@@ -212,13 +210,12 @@ public class Player : MonoBehaviour {
         //Change character height
         transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y / 2, transform.localScale.z);
 
-        print("duck");
     }
 
     //Called when the player wants to jump
     void Jump()
     {
-        //Change character height
+        //Change character height back to normal
         transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y * 2, transform.localScale.z);
 
         //Set to jumping and start to jump
