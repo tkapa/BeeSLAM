@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Player : MonoBehaviour {
 
     //Used to define which number player this is
@@ -16,7 +17,8 @@ public class Player : MonoBehaviour {
         EPS_Standing,
         EPS_Jumping,
         EPS_Dodging,
-        EPS_Parrying
+        EPS_Parrying,
+        EPS_Ducking
     }
 
     [Tooltip("Number for player")]
@@ -28,7 +30,8 @@ public class Player : MonoBehaviour {
     [HideInInspector]
     public Rigidbody2D rb;
 
-    Transform arm;
+    public Transform arm;
+    public Transform point;
 
     //Inputs for this player
     public string throwInput, dodgeInput;
@@ -46,9 +49,9 @@ public class Player : MonoBehaviour {
     public Vector2 lowThrowStrength, medThrowStrength, highThrowStrength;
 
     //Manages the player's count to jump or dodge
-    public float doubleTapTime = 0.1f;
-    private float dodgeTime;
-
+    public Vector3 dodgeThresholds = new Vector3(0.3f, 0.4f, 0.8f);
+    private float jumpTimerStart = 0;
+    public float dodgeTime;
     //Beer can gameObject
     public GameObject beerCan;
     Vector2 startPos;
@@ -70,20 +73,28 @@ public class Player : MonoBehaviour {
             takingInput = false;
             ResetPosition();
         });
-
-        arm = GetComponentInChildren<Transform>();
     }
 	
 	// Update is called once per frame
 	void Update () {
+        RotateArm(Time.deltaTime);
+
         //If input is being accepted
         if (takingInput)
             PollInput(Time.deltaTime);
-	}
+
+    }
 
     //Called to take input from the player
     void PollInput(float timeDelta)
     {
+        //
+        //If the dodge button is pressed start the timer
+        //if the button is pressed again within the time frame jump
+        //else stop time, don't jump,reset counter
+
+        //
+
         //While holding down the throw button
         if (Input.GetKey(throwInput))
         {
@@ -101,12 +112,23 @@ public class Player : MonoBehaviour {
         }
 
         //When the dodge button is presssed
-        if (Input.GetKeyDown(dodgeInput))
+        if (Input.GetKey(dodgeInput))
         {
-            //For now just jump
-            if(playerState == Player_State.EPS_Standing)
-                Jump();
+            //Player jumps if they press the dodge button twice
+            //Player dodges if they hold it down for a little bit
+            //Player ducks for however long they want after those                
+
+            dodgeTime += timeDelta;
+
         }
+        else if (Input.GetKeyUp(dodgeInput))
+        {
+            dodgeTime = 0;
+
+        }
+
+        //
+        CheckDodgeInput(timeDelta); //Dodge,jump,duck
     }
 
     //Called when the player is hit
@@ -180,6 +202,42 @@ public class Player : MonoBehaviour {
         }
     }
 
+    void Duck()
+    {
+        print("duck");
+    }
+
+    //Is called when the player goes to ttry to Jump,duck or dodge
+    void CheckDodgeInput(float d)
+    {
+        if (Input.GetKeyDown(dodgeInput))
+        {
+            if (dodgeTime < dodgeThresholds.x) {
+                if (playerState == Player_State.EPS_Standing)
+                {
+                    if (Time.time < jumpTimerStart + dodgeThresholds.x)
+                        Jump();
+                        
+                }
+                jumpTimerStart = Time.time;
+            }
+            else if (dodgeTime > dodgeThresholds.x && dodgeTime <= dodgeThresholds.y)
+            {
+                //in here
+                print("dodge");
+            }
+            //Duck
+            else if (dodgeTime > dodgeThresholds.y)
+            {
+                //in here
+                
+                Duck();
+            }
+            
+        }
+        
+    }
+
     //Called when the player wants to jump
     void Jump()
     {
@@ -192,6 +250,7 @@ public class Player : MonoBehaviour {
     //Coroutine begins wheen the player dodges
     IEnumerator Dodge()
     {
+        playerState = Player_State.EPS_Dodging;
         //Player jumps backwards
         //Player is set to dodging state while jumping backwards
         //Player jumps forwasrds again
@@ -221,5 +280,12 @@ public class Player : MonoBehaviour {
             
 
         //Provide screenshake here
+    }
+
+    void RotateArm(float d)
+    {
+        float angle = 4.0f;
+        float rSpeed = 5f;
+        float radius;
     }
 }
