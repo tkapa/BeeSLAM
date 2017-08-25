@@ -52,7 +52,10 @@ public class UserInterfaceManager : MonoBehaviour {
             loser = (int)p.playerNumber;
 
             //Gets the players number
-            result = loser + 1;
+            if (loser == 0)
+                result = 2;
+            else
+                result = 1;
             takeAway = true;
             print(loser);
 
