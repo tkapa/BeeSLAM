@@ -24,14 +24,15 @@ public class Player : MonoBehaviour {
     [Tooltip("Number for player")]
     public Player_Number playerNumber;
 
-    [HideInInspector]
+    //[HideInInspector]
     public Player_State playerState = Player_State.EPS_Standing;
 
     [HideInInspector]
     public Rigidbody2D rb;
 
     public Transform arm;
-    public Transform point;
+
+    public GameObject[] anims;
 
     //Inputs for this player
     public string throwInput, dodgeInput;
@@ -50,8 +51,9 @@ public class Player : MonoBehaviour {
 
     //Manages the player's count to jump or dodge
     public Vector2 dodgeThresholds = new Vector2(0.4f, 0.8f);
-    private float jumpTimerStart = 0;
-    public float dodgeTime;
+    private float distToGround;
+    private float dodgeTime;
+    private float jumpTime = 0.5f;
 
     //Beer can gameObject
     public GameObject beerCan;
@@ -74,11 +76,24 @@ public class Player : MonoBehaviour {
             takingInput = false;
         });
 
-        arm = GetComponentInChildren<Transform>();
     }
 	
 	// Update is called once per frame
 	void Update () {
+
+        //find arm on stand obj
+        if (playerState == Player_State.EPS_Standing)
+        {
+            arm = transform.Find("Stand/arm").transform;
+            distToGround = transform.Find("Stand").GetComponent<Collider2D>().bounds.extents.y;
+        }
+        //find arm on ducking obj
+        else if (playerState == Player_State.EPS_Ducking)
+        {
+            arm = transform.Find("Duck/arm").transform;
+            distToGround = transform.Find("Duck").GetComponent<Collider2D>().bounds.extents.y;
+        }
+           
 
         //If input is being accepted
         if (takingInput)
@@ -109,9 +124,6 @@ public class Player : MonoBehaviour {
         //When the dodge button is presssed
         if (Input.GetKey(dodgeInput))
         {
-            //Player ducks if they are holding down the button
-            //Once the player releases the button and its over the threshold.z theen jump faster
-            //If they hold down for a little bit 
 
             dodgeTime += timeDelta;
 
@@ -122,13 +134,16 @@ public class Player : MonoBehaviour {
         }
         else if (Input.GetKeyUp(dodgeInput))
         {
-
             //Dodge,jump
             if (playerState == Player_State.EPS_Ducking)
                 Jump();
-            
+
+            //Reset dodge Time
             dodgeTime = 0;
         }
+
+        if (playerState == Player_State.EPS_Jumping)
+            jumpTime -= timeDelta;
     }
 
     //Called when the player is hit
@@ -140,6 +155,7 @@ public class Player : MonoBehaviour {
             EventManager.instance.OnEndRound.Invoke(0);
     }
 
+    //Throw logic here
     void Throw()
     {
         if (throwHoldTime > throwThresholds.y)
@@ -202,34 +218,36 @@ public class Player : MonoBehaviour {
         }
     }
 
+    //Duck logic here
     void Duck()
     {
         playerState = Player_State.EPS_Ducking;
 
-        //Change character height
-        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y / 2, transform.localScale.z);
-
+        //Change player Sprites here
+        anims[1].SetActive(true);
+        anims[0].SetActive(false);
     }
 
     //Called when the player wants to jump
     void Jump()
     {
-        //Change character height back to normal
-        transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y * 2, transform.localScale.z);
-
-        //Set to jumping and start to jump
-        playerState = Player_State.EPS_Jumping;
-
+        //Change player Sprites here
+        anims[1].SetActive(false);
+        anims[0].SetActive(true);
 
         rb.AddForce(new Vector2(0, jumpingForce));
+        playerState = Player_State.EPS_Jumping;
+  
     }
 
     //Reset the player's position to the origin
     public void ResetPosition()
     {
-        if (playerState == Player_State.EPS_Ducking)
-            transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y * 2, transform.localScale.z);
         playerState = Player_State.EPS_Standing;
+
+        //Change player Sprites here - Make sure they are standing
+        anims[1].SetActive(false);
+        anims[0].SetActive(true);
         //Change character height back to normal
         transform.position = startPos;
     }
@@ -238,8 +256,15 @@ public class Player : MonoBehaviour {
     {
         //Upon collision with the ground
         if (collision.gameObject.tag == "ground" && playerState == Player_State.EPS_Jumping)
-            playerState = Player_State.EPS_Standing;
+        {
+            if (jumpTime <= 0){
+                print("collided with grouund");
 
+                playerState = Player_State.EPS_Standing;
+                jumpTime = 0.5f;
+            }
+        }
+           
         //Upon collision with a beer can
         if (collision.gameObject.tag == "beer" && takingInput)
         {
@@ -248,5 +273,4 @@ public class Player : MonoBehaviour {
     
         //Provide screenshake here
     }
-
 }
