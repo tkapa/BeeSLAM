@@ -21,6 +21,9 @@ public class Beer : MonoBehaviour {
 	void Start () {
         EventManager.instance.OnEndRound.AddListener((b)=> { Destroy(this.gameObject); });
 
+        //default rebound set to random
+        defaultRebound = Random.Range(200, 700);
+
         //If there's no Rigidbody
         if (!GetComponent<Rigidbody2D>())
             Debug.LogError("Beer prefab does not contain a RigidBody!");
@@ -49,16 +52,15 @@ public class Beer : MonoBehaviour {
 
         Vector2 direction = o.transform.position - transform.position;
         print(direction);
-        rb.AddForce(direction * totalForce);
+        rb.AddForce(-direction * totalForce);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        print("hit beer dud");
         if (collision.gameObject.tag == "beer")
         {
             
-            GameObject.FindObjectOfType<ScreenShake>().Shake(Random.Range(0.1f, 0.5f), 0.1f);
+            FindObjectOfType<ScreenShake>().Shake(Random.Range(0.05f, 0.2f), 0.1f);
             PushBack(collision.gameObject);
         }
     }

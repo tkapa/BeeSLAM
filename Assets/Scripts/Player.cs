@@ -46,7 +46,7 @@ public class Player : MonoBehaviour {
     public Vector2 throwThresholds = new Vector2(0.4f, 0.8f);
     private float throwHoldTime = 0.0f;
 
-    public Vector2 lowThrowStrength, medThrowStrength, highThrowStrength;
+    public Vector2[] lowThrowStrength, medThrowStrength, highThrowStrength;
 
     //Manages the player's count to jump or dodge
     public Vector2 dodgeThresholds = new Vector2(0.4f, 0.8f);
@@ -149,14 +149,14 @@ public class Player : MonoBehaviour {
                 //Throw for standing
                 case Player_State.EPS_Standing:
                     GameObject b = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
-                    b.GetComponent<Rigidbody2D>().AddForce(highThrowStrength);
+                    b.GetComponent<Rigidbody2D>().AddForce(highThrowStrength[0]);
                     Destroy(b, 4.0f);
                     break;
 
                 //Throw for jumping
                 case Player_State.EPS_Jumping:
                     GameObject g = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
-                    g.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength);
+                    g.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength[1]);
                     Destroy(g, 4.0f);
                     break;
             }
@@ -168,14 +168,14 @@ public class Player : MonoBehaviour {
                 //Throw for standing
                 case Player_State.EPS_Standing:
                     GameObject b = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
-                    b.GetComponent<Rigidbody2D>().AddForce(medThrowStrength);
+                    b.GetComponent<Rigidbody2D>().AddForce(medThrowStrength[0]);
                     Destroy(b, 4.0f);
                     break;
 
                 //Throw for jumping
                 case Player_State.EPS_Jumping:
                     GameObject g = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
-                    g.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength);
+                    g.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength[1]);
                     Destroy(g, 4.0f);
                     break;
             }
@@ -187,14 +187,14 @@ public class Player : MonoBehaviour {
                 //Throw for standing
                 case Player_State.EPS_Standing:
                     GameObject b = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
-                    b.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength);
+                    b.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength[0]);
                     Destroy(b, 4.0f);
                     break;
 
                 //Throw for jumping
                 case Player_State.EPS_Jumping:
                     GameObject g = Instantiate(beerCan, arm.position, arm.rotation) as GameObject;
-                    g.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength);
+                    g.GetComponent<Rigidbody2D>().AddForce(lowThrowStrength[1]);
                     Destroy(g, 4.0f);
                     break;
             }
