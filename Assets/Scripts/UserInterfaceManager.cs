@@ -11,11 +11,14 @@ public class UserInterfaceManager : MonoBehaviour {
 
     //Text for the game
     public Text roundTimerText;
+    public GameObject WinRoundText;
     public GameObject roundCountdownText;
 
     bool mainMenuShowing = true;
 
     GameManager gm;
+
+    int result;
 
     // Use this for initialization
     void Start()
@@ -26,9 +29,13 @@ public class UserInterfaceManager : MonoBehaviour {
         EventManager.instance.OnEndGame.AddListener(SwitchUI);
         EventManager.instance.OnBeginRound.AddListener(()=> {
             roundCountdownText.SetActive(false);
+            WinRoundText.SetActive(false);
         });
         EventManager.instance.OnEndRound.AddListener((b) => {
             roundCountdownText.SetActive(true);
+            WinRoundText.SetActive(true);
+            result = b + 1;
+            WinRoundText.GetComponent<Text>().text = "Player " + result.ToString() + " Wins";
         });
     }
 
@@ -42,6 +49,7 @@ public class UserInterfaceManager : MonoBehaviour {
         int rrt = (int)gm.roundResetCounter;
         roundCountdownText.GetComponent<Text>().text = rrt.ToString();
 
+        
         /*if (Input.GetKeyDown("v"))
             SwitchUI();*/
     }
@@ -52,6 +60,5 @@ public class UserInterfaceManager : MonoBehaviour {
         mainMenuShowing = !mainMenuShowing;
         mainMenu.SetActive(mainMenuShowing);
         gameUI.SetActive(!mainMenuShowing);
-        print("Cuck'd");
     }
 }

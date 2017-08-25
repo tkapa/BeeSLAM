@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour {
     bool isPlaying = false;
     bool gameManagerActive = false;
     float timer;
+
 	// Use this for initialization
 	void Start () {
         //Listening for important events
@@ -120,7 +121,6 @@ public class GameManager : MonoBehaviour {
 
         if (playerOneWins >= maximumWins || playerTwoWins >= maximumWins)
         {
-            print("Ended");
             //If either player has reached the maximum number of wins, finish the game.
             EventManager.instance.OnEndGame.Invoke();
         }

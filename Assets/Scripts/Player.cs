@@ -49,7 +49,7 @@ public class Player : MonoBehaviour {
     public Vector2 lowThrowStrength, medThrowStrength, highThrowStrength;
 
     //Manages the player's count to jump or dodge
-    public Vector3 dodgeThresholds = new Vector3(0.3f, 0.4f, 0.8f);
+    public Vector2 dodgeThresholds = new Vector2(0.4f, 0.8f);
     private float jumpTimerStart = 0;
     public float dodgeTime;
     //Beer can gameObject
@@ -73,11 +73,12 @@ public class Player : MonoBehaviour {
             takingInput = false;
             ResetPosition();
         });
+
+        arm = GetComponentInChildren<Transform>();
     }
 	
 	// Update is called once per frame
 	void Update () {
-        RotateArm(Time.deltaTime);
 
         //If input is being accepted
         if (takingInput)
@@ -88,12 +89,6 @@ public class Player : MonoBehaviour {
     //Called to take input from the player
     void PollInput(float timeDelta)
     {
-        //
-        //If the dodge button is pressed start the timer
-        //if the button is pressed again within the time frame jump
-        //else stop time, don't jump,reset counter
-
-        //
 
         //While holding down the throw button
         if (Input.GetKey(throwInput))
@@ -114,21 +109,25 @@ public class Player : MonoBehaviour {
         //When the dodge button is presssed
         if (Input.GetKey(dodgeInput))
         {
-            //Player jumps if they press the dodge button twice
-            //Player dodges if they hold it down for a little bit
-            //Player ducks for however long they want after those                
+            //Player ducks if they are holding down the button
+            //Once the player releases the button and its over the threshold.z theen jump faster
+            //If they hold down for a little bit 
 
             dodgeTime += timeDelta;
+
+            //Player ducks
+            Duck();
 
         }
         else if (Input.GetKeyUp(dodgeInput))
         {
+
+            //Dodge,jump
+            if (playerState == Player_State.EPS_Standing)
+                Jump();
+
             dodgeTime = 0;
-
         }
-
-        //
-        CheckDodgeInput(timeDelta); //Dodge,jump,duck
     }
 
     //Called when the player is hit
@@ -207,37 +206,6 @@ public class Player : MonoBehaviour {
         print("duck");
     }
 
-    //Is called when the player goes to ttry to Jump,duck or dodge
-    void CheckDodgeInput(float d)
-    {
-        if (Input.GetKeyDown(dodgeInput))
-        {
-            if (dodgeTime < dodgeThresholds.x) {
-                if (playerState == Player_State.EPS_Standing)
-                {
-                    if (Time.time < jumpTimerStart + dodgeThresholds.x)
-                        Jump();
-                        
-                }
-                jumpTimerStart = Time.time;
-            }
-            else if (dodgeTime > dodgeThresholds.x && dodgeTime <= dodgeThresholds.y)
-            {
-                //in here
-                print("dodge");
-            }
-            //Duck
-            else if (dodgeTime > dodgeThresholds.y)
-            {
-                //in here
-                
-                Duck();
-            }
-            
-        }
-        
-    }
-
     //Called when the player wants to jump
     void Jump()
     {
@@ -245,18 +213,6 @@ public class Player : MonoBehaviour {
         playerState = Player_State.EPS_Jumping;
 
         rb.AddForce(new Vector2(0, jumpingForce));
-    }
-
-    //Coroutine begins wheen the player dodges
-    IEnumerator Dodge()
-    {
-        playerState = Player_State.EPS_Dodging;
-        //Player jumps backwards
-        //Player is set to dodging state while jumping backwards
-        //Player jumps forwasrds again
-        //Player is set to Parry state during this time
-        //Player returns to origin position and is set to standing again
-        yield return null;
     }
 
     //Reset the player's position to the origin
@@ -282,10 +238,4 @@ public class Player : MonoBehaviour {
         //Provide screenshake here
     }
 
-    void RotateArm(float d)
-    {
-        float angle = 4.0f;
-        float rSpeed = 5f;
-        float radius;
-    }
 }
