@@ -13,7 +13,8 @@ public class UserInterfaceManager : MonoBehaviour {
     public Text roundTimerText;
     public GameObject WinRoundText;
     public GameObject roundCountdownText;
-
+    public Slider[] sliders;
+    public float speed = 5;
     bool mainMenuShowing = true;
 
     GameManager gm;
@@ -30,11 +31,23 @@ public class UserInterfaceManager : MonoBehaviour {
         EventManager.instance.OnBeginRound.AddListener(()=> {
             roundCountdownText.SetActive(false);
             WinRoundText.SetActive(false);
+
+            //Reset hp bars
+            foreach(Slider s in sliders)
+            {
+                s.GetComponent<Slider>().value = 1;
+            }
         });
         EventManager.instance.OnEndRound.AddListener((b) => {
             roundCountdownText.SetActive(true);
             WinRoundText.SetActive(true);
+
+            //Takes away hp
+            UpdateHP(b);
+
+            //Gets the players number
             result = b + 1;
+            //Displays who has won
             WinRoundText.GetComponent<Text>().text = "Player " + result.ToString() + " Wins";
         });
     }
@@ -60,5 +73,15 @@ public class UserInterfaceManager : MonoBehaviour {
         mainMenuShowing = !mainMenuShowing;
         mainMenu.SetActive(mainMenuShowing);
         gameUI.SetActive(!mainMenuShowing);
+    }
+
+    void UpdateHP(int playerW)
+    {
+        //GameObject.FindObjectOfType<ScreenShake>().Shake(0.1f, 0.09f);
+        if (playerW == 1)
+            sliders[playerW].GetComponent<Slider>().value = Mathf.Lerp(sliders[playerW].GetComponent<Slider>().value, 0, speed);
+        else
+            sliders[playerW].GetComponent<Slider>().value = Mathf.Lerp(sliders[playerW].GetComponent<Slider>().value, 0, speed);
+
     }
 }

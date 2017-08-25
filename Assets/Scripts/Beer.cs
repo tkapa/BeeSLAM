@@ -48,14 +48,17 @@ public class Beer : MonoBehaviour {
         totalForce += o.GetComponent<Rigidbody2D>().velocity.magnitude + rb.velocity.magnitude;
 
         Vector2 direction = o.transform.position - transform.position;
-
+        print(direction);
         rb.AddForce(direction * totalForce);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.tag == "beer")
+        print("hit beer dud");
+        if (collision.gameObject.tag == "beer")
         {
+            
+            GameObject.FindObjectOfType<ScreenShake>().Shake(Random.Range(0.1f, 0.5f), 0.1f);
             PushBack(collision.gameObject);
         }
     }
