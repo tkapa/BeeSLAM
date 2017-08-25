@@ -23,7 +23,7 @@ public class UserInterfaceManager : MonoBehaviour {
     int result;
     bool takeAway = false;
     float healthValue = 100.0f;
-    int intWins = 0;
+    int player1wins = 0, player2wins = 0;
     // Use this for initialization
     void Start()
     {
@@ -45,14 +45,25 @@ public class UserInterfaceManager : MonoBehaviour {
             }
 
             takeAway = false;
-
+            //Displays score for player 1
+            if (b == 0)
+            {
+                player1wins++;
+                wins[b].text = player1wins.ToString();
+            }
+            //Displays score for player 2
+            else if(b == 1)
+            {
+                player2wins++;
+                wins[b].text = player2wins.ToString();
+            }
             //Displays a draw
-            if (b == 2)
+            else
             {
                 WinRoundText.SetActive(true);
                 WinRoundText.GetComponent<Text>().text = "Draw";
             }
-           
+
         });
 
         EventManager.instance.OnPlayerDeath.AddListener((v ,p) => {
