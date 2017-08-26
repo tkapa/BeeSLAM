@@ -256,7 +256,7 @@ public class Player : MonoBehaviour {
     public void ResetPosition()
     {
         playerState = Player_State.EPS_Standing;
-
+        throwParticle.Stop();
         //Change player Sprites here - Make sure they are standing
         anims[1].SetActive(false);
         anims[0].SetActive(true);
