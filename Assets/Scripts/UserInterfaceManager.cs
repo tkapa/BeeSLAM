@@ -29,7 +29,17 @@ public class UserInterfaceManager : MonoBehaviour {
     {
         //Set up the required things
         gm = GetComponent<GameManager>();
-        EventManager.instance.OnStartGame.AddListener(SwitchUI);
+        EventManager.instance.OnStartGame.AddListener(() => {
+
+            print("ram");
+            player1wins = player2wins = 0;
+
+            foreach (Text t in wins)
+            {
+                t.text = 0.ToString();
+            }
+            SwitchUI();
+        });
         EventManager.instance.OnEndGame.AddListener(SwitchUI);
         EventManager.instance.OnBeginRound.AddListener(()=> {
             roundCountdownText.SetActive(false);
@@ -38,6 +48,7 @@ public class UserInterfaceManager : MonoBehaviour {
         EventManager.instance.OnEndRound.AddListener((b) => {
             roundCountdownText.SetActive(true);
 
+            print("rem");
             //Reset hp bars
             foreach (Slider s in sliders)
             {

@@ -46,14 +46,15 @@ public class Player : MonoBehaviour {
     //Manages the player's throwing and when the strength increases 
     public Vector2 throwThresholds = new Vector2(0.4f, 0.8f);
     private float throwHoldTime = 0.0f;
-
+    private float throwTimer = 0.5f;
     public Vector2[] lowThrowStrength, medThrowStrength, highThrowStrength;
 
     //Manages the player's count to jump or dodge
     public Vector2 dodgeThresholds = new Vector2(0.4f, 0.8f);
     private float distToGround;
     private float dodgeTime;
-    private float jumpTime = 0.5f;
+    private float jumpTime = 0;
+    private float throwRate = 0.5f;
 
     //Beer can gameObject
     public GameObject beerCan;
@@ -80,6 +81,7 @@ public class Player : MonoBehaviour {
 
         EventManager.instance.OnEndRound.AddListener((b) => {
             takingInput = false;
+            transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         });
     }
 	
@@ -112,7 +114,8 @@ public class Player : MonoBehaviour {
 
         if (Input.GetKeyDown(throwInput))
         {
-            throwParticle.Play();
+            if (Time.time > throwTimer)
+                throwParticle.Play();
         }
 
         //While holding down the throw button
@@ -125,8 +128,11 @@ public class Player : MonoBehaviour {
         //When the player releases the throw button
         else if (Input.GetKeyUp(throwInput))
         {
-            throwParticle.Stop();
-            Throw();
+            if (Time.time > throwTimer)
+            {
+                throwParticle.Stop();
+                Throw();
+            }
 
             //Reset the hold time
             throwHoldTime = 0.0f;
@@ -228,6 +234,8 @@ public class Player : MonoBehaviour {
                     break;
             }
         }
+        throwTimer = Time.time + throwRate;
+
     }
 
     //Duck logic here
@@ -247,7 +255,7 @@ public class Player : MonoBehaviour {
         anims[1].SetActive(false);
         anims[0].SetActive(true);
 
-        rb.AddForce(new Vector2(0, jumpingForce));
+        rb.AddForce(new Vector2(0, jumpingForce* Mathf.Clamp(dodgeTime,1,1.2f)));
         playerState = Player_State.EPS_Jumping;
   
     }
