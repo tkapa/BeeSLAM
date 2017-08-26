@@ -62,6 +62,9 @@ public class MainMenu : MonoBehaviour {
         {
 
         }
+
+        if(Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
     }
 
     void Playing()
