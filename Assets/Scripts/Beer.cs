@@ -14,7 +14,7 @@ public class Beer : MonoBehaviour {
     public float defaultRebound = 500.0f;
     public float rollForce = 75.0f;
     //Time this object is invulnerable
-    public float invulTime = 0.1f;
+    float invulTime = 0.3f;
     float invulCount;
 
 	// Use this for initialization
