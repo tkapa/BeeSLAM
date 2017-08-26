@@ -53,7 +53,7 @@ public class Player : MonoBehaviour {
     public Vector2 dodgeThresholds = new Vector2(0.4f, 0.8f);
     private float distToGround;
     private float dodgeTime;
-    private float jumpTime = 0;
+    private float jumpTime = 0.5f;
     private float throwRate = 0.5f;
 
     //Beer can gameObject
@@ -251,12 +251,16 @@ public class Player : MonoBehaviour {
     //Called when the player wants to jump
     void Jump()
     {
+        print("jump");
+        print(playerState);
+        playerState = Player_State.EPS_Jumping;
+
         //Change player Sprites here
         anims[1].SetActive(false);
         anims[0].SetActive(true);
 
         rb.AddForce(new Vector2(0, jumpingForce* Mathf.Clamp(dodgeTime,1,1.2f)));
-        playerState = Player_State.EPS_Jumping;
+        
   
     }
 
@@ -280,7 +284,7 @@ public class Player : MonoBehaviour {
             //Check time
             if (jumpTime <= 0){
                 //print("collided with grouund");
-
+                print("standing");
                 playerState = Player_State.EPS_Standing;
                 jumpTime = 0.5f;
             }
